@@ -4154,28 +4154,39 @@ console.log('  第二关：赫敏·格兰杰 — 魁地奇球场之战');
 
   // ── Orientation detection (force landscape on mobile) ──
   function checkOrientation() {
-    const isMobileDevice = window.matchMedia('(max-width: 1024px)').matches;
+    const isMobileDevice = window.matchMedia('(max-width: 1024px)').matches
+                        || /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);
     if (!isMobileDevice) return;
     const isPortrait = window.innerHeight > window.innerWidth;
     const gameEl = document.getElementById('game-container');
     const rotateHint = document.getElementById('rotate-hint');
     const touchEl = document.getElementById('touch-controls');
     const skillsEl = document.getElementById('skills-hud');
+    const levelSel = document.getElementById('level-select-overlay');
+    const charSel = document.getElementById('char-select-overlay');
     if (isPortrait) {
       if (gameEl) gameEl.style.display = 'none';
       if (touchEl) touchEl.style.display = 'none';
       if (skillsEl) skillsEl.style.display = 'none';
+      if (levelSel) levelSel.style.display = 'none';
+      if (charSel) charSel.style.display = 'none';
       if (rotateHint) rotateHint.style.display = 'flex';
     } else {
       if (rotateHint) rotateHint.style.display = 'none';
       if (gameEl) gameEl.style.display = 'block';
       if (touchEl) touchEl.style.display = 'flex';
       if (skillsEl) skillsEl.style.display = 'flex';
+      // Restore level select if game not started
+      if (!gameStarted) {
+        if (levelSel) levelSel.style.display = (charSel && charSel.style.display === 'flex') ? 'none' : 'flex';
+      }
     }
   }
   window.addEventListener('resize', checkOrientation);
   window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 200));
+  // Poll every 1s on mobile (WeChat might not fire events)
   checkOrientation();
+  setInterval(checkOrientation, 1000);
 })();
 
 </script>
