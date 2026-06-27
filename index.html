@@ -2,16 +2,21 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a1a">
 <title>霍格沃茨保卫战</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #0a0a1a;
+    background: #000;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    height: 100dvh;
     font-family: 'Georgia', serif;
     overflow: hidden;
   }
@@ -25,6 +30,21 @@
     display: block;
     border-radius: 5px;
   }
+  /* Portrait warning overlay */
+  #rotate-hint {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5,5,20,0.95);
+    z-index: 200;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffe8a0;
+    font-size: 22px;
+    text-align: center;
+  }
+  #rotate-hint .rotate-icon { font-size: 60px; animation: rotateHint 2s ease-in-out infinite; }
+  @keyframes rotateHint { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
   #hud {
     position: absolute;
     top: 12px;
@@ -162,15 +182,43 @@
     z-index: 55;
     padding: 6px;
   }
-  /* Mobile: scale canvas */
+  /* Mobile: fullscreen landscape */
   @media (max-width: 1024px) {
-    body { height: 100dvh; }
-    canvas { max-width: 100vw; max-height: 100dvh; }
-    #game-container { border-width: 2px; }
+    body { background: #000; height: 100dvh; }
+    #game-container {
+      border: none; border-radius: 0; box-shadow: none;
+      width: 100vw; width: 100dvw;
+      height: 100vh; height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    canvas {
+      max-width: 100vw; max-width: 100dvw;
+      max-height: 100vh; max-height: 100dvh;
+      width: auto; height: auto;
+      border-radius: 0;
+    }
     #skills-hud { bottom: 90px; }
-    .level-card { width: 220px; padding: 20px 16px; }
-    .level-card .level-emoji { font-size: 44px; }
-    .level-card h2 { font-size: 18px; }
+    #hud { font-size: 11px; top: 6px; left: 8px; }
+    .level-card { width: 200px; padding: 16px 12px; }
+    .level-card .level-emoji { font-size: 40px; }
+    .level-card h2 { font-size: 16px; }
+    .dpad-btn { width: 44px; height: 44px; font-size: 18px; }
+    .dpad-empty { width: 44px; height: 44px; }
+    .spell-btn { width: 48px; height: 38px; font-size: 12px; }
+    .spell-btn .spell-btn-key { font-size: 14px; }
+    .spell-btn .spell-btn-name { font-size: 7px; }
+  }
+
+  /* Portrait: show rotate hint, hide game */
+  @media (max-width: 1024px) and (orientation: portrait) {
+    #game-container { display: none; }
+    #rotate-hint { display: flex; }
+    #touch-controls { display: none; }
+  }
+  @media (max-width: 1024px) and (orientation: landscape) {
+    #rotate-hint { display: none; }
+    #game-container { display: flex; }
+    #touch-controls { display: flex; }
   }
   /* D-pad area */
   .dpad-area {
@@ -264,6 +312,13 @@
 </style>
 </head>
 <body>
+
+<!-- Portrait: show rotate hint -->
+<div id="rotate-hint">
+  <div class="rotate-icon">📱</div>
+  <p style="margin-top:20px;">请旋转手机</p>
+  <p style="color:#888; font-size:15px; margin-top:8px;">横屏体验更好</p>
+</div>
 
 <div id="level-select-overlay">
   <h1>霍格沃茨保卫战</h1>
