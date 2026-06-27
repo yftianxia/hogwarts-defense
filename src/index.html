@@ -182,19 +182,18 @@
     z-index: 55;
     padding: 6px;
   }
-  /* Mobile: fullscreen landscape */
+  /* Mobile: fill screen, both orientations */
   @media (max-width: 1024px) {
-    body { background: #000; height: 100dvh; }
+    body { background: #000; height: 100dvh; height: 100vh; }
     #game-container {
       border: none; border-radius: 0; box-shadow: none;
-      width: 100vw; width: 100dvw;
-      height: 100vh; height: 100dvh;
+      width: 100vw; height: 100vh; height: 100dvh;
       display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
     }
     canvas {
-      max-width: 100vw; max-width: 100dvw;
-      max-height: 100vh; max-height: 100dvh;
-      width: auto; height: auto;
+      max-width: 100vw; max-height: 100vh; max-height: 100dvh;
+      object-fit: contain;
       border-radius: 0;
     }
     #skills-hud { bottom: 90px; }
@@ -207,18 +206,7 @@
     .spell-btn { width: 48px; height: 38px; font-size: 12px; }
     .spell-btn .spell-btn-key { font-size: 14px; }
     .spell-btn .spell-btn-name { font-size: 7px; }
-  }
-
-  /* Portrait: show rotate hint, hide game */
-  @media (max-width: 1024px) and (orientation: portrait) {
-    #game-container { display: none; }
-    #rotate-hint { display: flex; }
-    #touch-controls { display: none; }
-  }
-  @media (max-width: 1024px) and (orientation: landscape) {
     #rotate-hint { display: none; }
-    #game-container { display: flex; }
-    #touch-controls { display: flex; }
   }
   /* D-pad area */
   .dpad-area {
@@ -4152,41 +4140,16 @@ console.log('  第二关：赫敏·格兰杰 — 魁地奇球场之战');
     // Desktop: keep touch controls hidden but available
   }
 
-  // ── Orientation detection (force landscape on mobile) ──
-  function checkOrientation() {
-    const isMobileDevice = window.matchMedia('(max-width: 1024px)').matches
-                        || /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);
-    if (!isMobileDevice) return;
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const gameEl = document.getElementById('game-container');
-    const rotateHint = document.getElementById('rotate-hint');
-    const touchEl = document.getElementById('touch-controls');
-    const skillsEl = document.getElementById('skills-hud');
-    const levelSel = document.getElementById('level-select-overlay');
-    const charSel = document.getElementById('char-select-overlay');
-    if (isPortrait) {
-      if (gameEl) gameEl.style.display = 'none';
-      if (touchEl) touchEl.style.display = 'none';
-      if (skillsEl) skillsEl.style.display = 'none';
-      if (levelSel) levelSel.style.display = 'none';
-      if (charSel) charSel.style.display = 'none';
-      if (rotateHint) rotateHint.style.display = 'flex';
-    } else {
-      if (rotateHint) rotateHint.style.display = 'none';
-      if (gameEl) gameEl.style.display = 'block';
-      if (touchEl) touchEl.style.display = 'flex';
-      if (skillsEl) skillsEl.style.display = 'flex';
-      // Restore level select if game not started
-      if (!gameStarted) {
-        if (levelSel) levelSel.style.display = (charSel && charSel.style.display === 'flex') ? 'none' : 'flex';
-      }
-    }
+  // ── Mobile: canvas auto-scale ──
+  function resizeCanvas() {
+    if (!window.matchMedia('(max-width: 1024px)').matches) return;
+    const scale = Math.min(window.innerWidth / W, window.innerHeight / H);
+    canvas.style.width = (W * scale) + 'px';
+    canvas.style.height = (H * scale) + 'px';
   }
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 200));
-  // Poll every 1s on mobile (WeChat might not fire events)
-  checkOrientation();
-  setInterval(checkOrientation, 1000);
+  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 300));
+  resizeCanvas();
 })();
 
 </script>
