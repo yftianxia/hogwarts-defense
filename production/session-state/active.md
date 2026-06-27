@@ -1,64 +1,37 @@
-# Session State -- 2026-06-27
+# Session State -- 2026-06-27 (最终状态)
 
 <!-- STATUS -->
-Epic: Multi-Level Expansion
-Feature: Level 2 + Level 3
-Task: Complete — both levels playable
+Epic: Multi-Level + Mobile Deploy
+Feature: Level 2 + Level 3 + Touch Controls + GitHub Pages
+Task: ✅ Complete — project archived
 <!-- /STATUS -->
 
-## Current Task
-Level 2 and Level 3 fully implemented. All three levels playable.
+## 项目当前状态
 
-## Completed Today
+**线上地址**: https://yftianxia.github.io/hogwarts-defense
 
-### Level 2 — 赫敏·格兰杰（魁地奇球场）
-- [x] GDD written (design/gdd/level-2-quidditch-pitch.md)
-- [x] Hermione character: 90HP, 220spd, unique spell set
-- [x] New enemies: Dark Wizard (ranged), Hellhound (charger+fire pool), Troll (boss, 3 skills)
-- [x] New map: daytime quidditch pitch
-- [x] Dark Wizard AI: gate approach → hold position and shoot
-- [x] All spells tested and working
+### 三关全部可玩
 
-### Level 3 — 霍格沃茨决战（双人）
-- [x] Character selection: player picks Harry or Hermione
-- [x] AI companion: follows, dodges, attacks, uses skills
-- [x] Dual HP bars (companion HP changes color: blue→yellow→red)
-- [x] Combined enemy pool (apprentice, elite, darkWizard, hellhound, acromantula, troll)
-- [x] 5 waves, final wave has BOTH bosses simultaneously
-- [x] Enemy aggro system (targets nearest character, re-evaluates every 2-4s)
-- [x] Game over only when BOTH characters die
+| 关卡 | 角色 | 地图 | 敌人 | 特色 |
+|------|------|------|------|------|
+| 第一关 | 哈利·波特 | 城堡大门(夜晚) | 食死徒学徒/精英(冲锋)/八眼巨蛛BOSS | Q除你武器 E荧光闪烁 R烈火熊熊 F神锋无影 |
+| 第二关 | 赫敏·格兰杰 | 魁地奇球场(白天) | 黑巫师(远程)/地狱犬(冲锋+火池)/巨怪BOSS(3技能) | Q蓝火 E冰冻术 R霹雳爆炸 F漂浮咒 |
+| 第三关 | 哈利+赫敏 | 决战(黄昏) | 全部6种敌人混合，5波含双BOSS同场 | 选人系统 + AI同伴并肩作战 |
 
-### Architecture Refactor
-- [x] Data-driven LEVELS config (3 levels)
-- [x] Spell functions generalized via getCaster() (player + companion share same code)
-- [x] Enemy AI generalized via target.x/target.y (not hardcoded player)
-- [x] Unified wave format for Level 3 (apprentices + elites + darkWizards + hellhounds + boss)
-- [x] shootProjectileFrom() — generic projectile creation
-- [x] Level select screen with 3 cards
+### 技术架构
 
-### Bugs Fixed
-- [x] BUG: Wave display overwrite (Level 1)
-- [x] BUG: Missing kill SFX (Level 1 Q/R)
-- [x] BUG: Wave spawning used live counts, not spawn counts (Level 3 freeze)
-- [x] BUG: levitateY undefined → ctx.translate(NaN) → canvas corruption (Level 3 F spell)
-- [x] BUG: Companion AI complex movement caused freeze (simplified to priority system)
-- [x] Multiple NaN guards added (player, companion, enemies, fire pools)
+- 单文件 HTML + Canvas 2D + Web Audio API
+- 数据驱动多关卡配置 (`LEVELS[]` 数组)
+- 施法系统泛化 (`getCaster()` 支持玩家+AI同伴复用)
+- 敌人AI分四种: melee / ranged / charger / boss
+- 敌人仇恨系统 (Level 3双目标)
+- 触屏虚拟按键 (D-pad + QERF)
+- 移动端自适应缩放
+- GitHub Pages 部署
 
-## Key Decisions
-- Companion movement: priority-based (dodge > flee > follow), no blending
-- Boss wave: both bosses in wave 5, spawnInterval 0.2s
-- Spell dispatch: currentCaster pointer pattern, no function signature changes
-- Enemy AI: target property with periodic aggro re-evaluation
+### 更新方式
 
-## Files Modified
-- src/index.html (~3850 lines, +850 from refactor)
-- design/gdd/level-2-quidditch-pitch.md (created)
-
-## Open Questions
-- None currently
-
-## Next Steps
-- Level 1 elite charger AI behavior tuning
-- Spider boss fight polish
-- Balance testing across all 3 levels
-- Possible: HUD companion skill icons
+```bash
+cp src/index.html index.html
+git add -A && git commit -m "更新描述" && git push
+```
