@@ -4151,6 +4151,31 @@ console.log('  第二关：赫敏·格兰杰 — 魁地奇球场之战');
   if (!isMobile) {
     // Desktop: keep touch controls hidden but available
   }
+
+  // ── Orientation detection (force landscape on mobile) ──
+  function checkOrientation() {
+    const isMobileDevice = window.matchMedia('(max-width: 1024px)').matches;
+    if (!isMobileDevice) return;
+    const isPortrait = window.innerHeight > window.innerWidth;
+    const gameEl = document.getElementById('game-container');
+    const rotateHint = document.getElementById('rotate-hint');
+    const touchEl = document.getElementById('touch-controls');
+    const skillsEl = document.getElementById('skills-hud');
+    if (isPortrait) {
+      if (gameEl) gameEl.style.display = 'none';
+      if (touchEl) touchEl.style.display = 'none';
+      if (skillsEl) skillsEl.style.display = 'none';
+      if (rotateHint) rotateHint.style.display = 'flex';
+    } else {
+      if (rotateHint) rotateHint.style.display = 'none';
+      if (gameEl) gameEl.style.display = 'block';
+      if (touchEl) touchEl.style.display = 'flex';
+      if (skillsEl) skillsEl.style.display = 'flex';
+    }
+  }
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 200));
+  checkOrientation();
 })();
 
 </script>
